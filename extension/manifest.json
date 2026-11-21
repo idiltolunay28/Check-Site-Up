@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "BitB Guard — Browser-in-the-Browser Detector",
+  "version": "0.1.0",
+  "description": "Client-side defensive extension that inspects DOM hierarchies to detect Browser-in-the-Browser (BitB) phishing overlays.",
+  "permissions": [
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "BitB Guard",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file://*/*"
+      ],
+      "css": [
+        "styles/alert.css"
+      ],
+      "js": [
+        "content/detector.js",
+        "content/overlay.js",
+        "content/main.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BitB Guard</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>BitB Guard</h1>
+      <p class="subtitle">Browser-in-the-Browser Detector</p>
+    </div>
+    <span id="status-badge" class="badge badge-neutral">Checking</span>
+  </header>
+
+  <main class="content">
+    <section class="summary-card">
+      <div class="metric">
+        <span class="label">Risk Score</span>
+        <strong id="risk-score">0 / 100</strong>
+      </div>
+      <div class="metric">
+        <span class="label">Suspected Overlays</span>
+        <strong id="finding-count">0</strong>
+      </div>
+    </section>
+
+    <section class="signals-section">
+      <h2>Detected Signals</h2>
+      <ul id="signals-list" class="signals-list">
+        <li class="empty">No suspicious BitB patterns detected on this page.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <button id="rescan-btn" type="button">Rescan Page</button>
+    <span id="scan-time" class="timestamp"></span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

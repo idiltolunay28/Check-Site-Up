@@ -1,0 +1,50 @@
+/* BitB Guard — In-page defensive warning banner & highlight styles */
+
+#bitb-guard-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: #991b1b;
+  color: #fef2f2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-bottom: 2px solid #fca5a5;
+}
+
+#bitb-guard-banner.bitb-guard-medium {
+  background: #92400e;
+  border-bottom-color: #fcd34d;
+}
+
+#bitb-guard-banner strong {
+  font-weight: 700;
+}
+
+#bitb-guard-banner button {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+#bitb-guard-banner button:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.bitb-guard-flagged {
+  outline: 3px dashed #ef4444 !important;
+  outline-offset: 2px !important;
+}

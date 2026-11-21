@@ -1,0 +1,24 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / Build artifacts (if added later)
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+
+# Extension packaging
+*.zip
+*.crx
+*.pem
+
+# Local drafts / scratch notes
+*.tmp
+.env
