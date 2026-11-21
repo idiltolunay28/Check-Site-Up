@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test 3: Benign Site Login Modal (Negative Control)</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .benign-modal {
+      position: fixed;
+      top: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 420px;
+      max-width: 90vw;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+      padding: 22px;
+      z-index: 1000;
+    }
+
+    .benign-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .benign-close {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <main class="page-container">
+    <span class="tag tag-negative">Negative Control</span>
+    <h1 style="margin-top: 8px;">Legitimate Floating Login Modal</h1>
+    <p class="lead">
+      A normal website modal dialog containing a single close button (<code>×</code>) and a standard password input — with <strong>no</strong> fake address bar or OS window chrome.
+    </p>
+
+    <div class="notice">
+      <strong>Expected Detection:</strong> <strong>Safe</strong> (Score: 25/100, below the 45 alert threshold). This confirms the detector does not create false positives on ordinary floating login dialogs.
+    </div>
+
+    <div class="actions">
+      <button id="open-btn" class="btn btn-secondary" type="button">Open Benign Login Modal</button>
+      <a class="btn btn-secondary" href="index.html">Back to Test Suite</a>
+    </div>
+  </main>
+
+  <div id="benign-modal" class="benign-modal hidden" role="dialog" aria-label="Account Sign In">
+    <div class="benign-header">
+      <h2 style="font-size: 17px;">Sign in to This Site</h2>
+      <button id="close-btn" class="benign-close" type="button" aria-label="Close">×</button>
+    </div>
+    <p style="font-size: 13px; color: #475569; margin-bottom: 14px;">
+      This is a standard in-page login modal with no spoofed URL bar or fake browser chrome.
+    </p>
+    <form id="benign-form">
+      <div class="form-group">
+        <label for="benign-email">Email</label>
+        <input id="benign-email" type="email" placeholder="student@example.test" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="benign-pass">Password</label>
+        <input id="benign-pass" type="password" placeholder="••••••••" autocomplete="off" />
+      </div>
+      <button class="btn" type="submit" style="width: 100%;">Sign In (No-Op)</button>
+    </form>
+  </div>
+
+  <script>
+    const modal = document.getElementById("benign-modal");
+
+    document.getElementById("open-btn").addEventListener("click", () => {
+      modal.classList.remove("hidden");
+    });
+
+    document.getElementById("close-btn").addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    document.getElementById("benign-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      alert("Benign control modal — no data is transmitted.");
+    });
+  </script>
+</body>
+</html>

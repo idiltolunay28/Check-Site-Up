@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test 2: macOS Iframe-Backed BitB Popup</title>
+  <link rel="stylesheet" href="common.css" />
+</head>
+<body>
+  <main class="page-container">
+    <span class="tag tag-positive">Positive Test 2</span>
+    <h1 style="margin-top: 8px;">macOS-Style Iframe-Backed BitB Popup</h1>
+    <p class="lead">
+      Simulates a macOS browser popup using 3 circular traffic-light dots, a read-only <code>&lt;input&gt;</code> spoofed URL bar (<code>id.example.test</code>), and an embedded <code>&lt;iframe&gt;</code> login form.
+    </p>
+
+    <div class="notice">
+      <strong>Expected Detection &amp; Research Note:</strong> Flags as <strong>High Risk</strong> (fake URL bar + origin mismatch + embedded <code>&lt;iframe&gt;</code>). Note that the current baseline detector does <em>not</em> yet detect macOS traffic-light dots — we will add that heuristic on the <code>feat/detector-heuristics</code> branch to measure the improvement!
+    </div>
+
+    <div class="actions">
+      <button id="open-btn" class="btn" type="button">Continue with ExampleID</button>
+      <a class="btn btn-secondary" href="index.html">Back to Test Suite</a>
+    </div>
+  </main>
+
+  <!-- Synthetic macOS-style BitB window with embedded iframe (brand-free) -->
+  <div id="bitb-mac-window" class="fake-browser-window hidden" role="dialog" aria-label="Synthetic macOS Auth Popup">
+    <div id="drag-handle" class="fake-titlebar">
+      <div class="mac-controls" aria-label="Window controls">
+        <button id="close-btn" class="mac-dot mac-dot-close" type="button" title="Close"></button>
+        <button class="mac-dot mac-dot-min" type="button" title="Minimize"></button>
+        <button class="mac-dot mac-dot-max" type="button" title="Fullscreen"></button>
+      </div>
+      <span>ExampleID — OAuth Authorization</span>
+      <span style="width: 48px;"></span>
+    </div>
+
+    <div class="fake-addressbar">
+      <span aria-hidden="true">🔒</span>
+      <input
+        class="fake-url-box"
+        type="text"
+        readonly
+        aria-label="Simulated URL"
+        value="https://id.example.test/oauth/authorize?client=demo"
+      />
+    </div>
+
+    <iframe
+      title="Synthetic Embedded OAuth Frame"
+      style="width: 100%; height: 240px; border: 0; display: block;"
+      srcdoc="<!DOCTYPE html>
+      <html lang='en'>
+        <body style='font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 20px; margin: 0; color: #0f172a;'>
+          <h3 style='margin: 0 0 8px; font-size: 16px;'>ExampleID Embedded Sign-In</h3>
+          <p style='margin: 0 0 14px; font-size: 12px; color: #475569;'>Synthetic iframe content (no data is transmitted).</p>
+          <form onsubmit='event.preventDefault(); alert(&quot;Synthetic iframe form — no data sent.&quot;);'>
+            <input type='text' placeholder='Email or Account ID' autocomplete='off' style='display:block;width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:10px;border:1px solid #cbd5e1;border-radius:6px;' />
+            <input type='password' placeholder='Password' autocomplete='off' style='display:block;width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:12px;border:1px solid #cbd5e1;border-radius:6px;' />
+            <button type='submit' style='width:100%;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;'>Authorize (No-Op)</button>
+          </form>
+        </body>
+      </html>"
+    ></iframe>
+  </div>
+
+  <script>
+    const winEl = document.getElementById("bitb-mac-window");
+    const dragHandle = document.getElementById("drag-handle");
+
+    document.getElementById("open-btn").addEventListener("click", () => {
+      winEl.classList.remove("hidden");
+    });
+
+    document.getElementById("close-btn").addEventListener("click", () => {
+      winEl.classList.add("hidden");
+    });
+
+    // Drag behavior (clipped inside browser viewport)
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    dragHandle.addEventListener("mousedown", (event) => {
+      if (event.target.tagName === "BUTTON") return;
+      isDragging = true;
+      const rect = winEl.getBoundingClientRect();
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      if (!isDragging) return;
+      winEl.style.left = `${event.clientX - offsetX}px`;
+      winEl.style.top = `${Math.max(0, event.clientY - offsetY)}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  </script>
+</body>
+</html>

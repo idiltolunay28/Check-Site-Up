@@ -3,10 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BitB Synthetic Test Pages</title>
+  <title>BitB Guard — Synthetic Test Suite</title>
+  <link rel="stylesheet" href="common.css" />
 </head>
 <body>
-  <h1>BitB Synthetic Test Environment</h1>
-  <p>Add your brand-free synthetic HTML5/CSS3 test scenarios here.</p>
+  <main class="page-container">
+    <h1>BitB Guard — Synthetic Test Suite</h1>
+    <p class="lead">
+      Standalone, brand-free HTML5/CSS3 scenarios built to evaluate true positives and false positives of the client-side BitB detector.
+    </p>
+
+    <div class="notice">
+      <strong>Ethical &amp; Academic Scope:</strong> All pages below contain zero third-party brands or logos, use reserved RFC 2606 domains (<code>*.example.test</code>), and never transmit form input.
+    </div>
+
+    <div class="card-grid">
+      <article class="test-card">
+        <div>
+          <span class="tag tag-positive">Positive Test 1</span>
+          <h2 style="font-size: 16px; margin: 10px 0 6px;">Windows BitB Popup</h2>
+          <p style="font-size: 13px; color: #475569;">
+            Draggable fake browser window with <code>− □ ×</code> controls, spoofed HTTPS URL text, and a synthetic login form.
+          </p>
+        </div>
+        <a class="btn" href="bitb-windows.html">Open Test 1</a>
+      </article>
+
+      <article class="test-card">
+        <div>
+          <span class="tag tag-positive">Positive Test 2</span>
+          <h2 style="font-size: 16px; margin: 10px 0 6px;">macOS Iframe BitB Popup</h2>
+          <p style="font-size: 13px; color: #475569;">
+            macOS traffic-light dots, read-only <code>&lt;input&gt;</code> spoofed URL bar, and an embedded <code>&lt;iframe&gt;</code> login frame.
+          </p>
+        </div>
+        <a class="btn" href="bitb-iframe-macos.html">Open Test 2</a>
+      </article>
+
+      <article class="test-card">
+        <div>
+          <span class="tag tag-negative">Negative Control</span>
+          <h2 style="font-size: 16px; margin: 10px 0 6px;">Benign Login Modal</h2>
+          <p style="font-size: 13px; color: #475569;">
+            Normal floating modal with a password field and single <code>×</code> button — should <strong>not</strong> trigger a BitB alert.
+          </p>
+        </div>
+        <a class="btn btn-secondary" href="benign-modal.html">Open Control</a>
+      </article>
+    </div>
+  </main>
 </body>
 </html>
