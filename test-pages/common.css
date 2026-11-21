@@ -1,0 +1,234 @@
+/* Shared layout & synthetic window styles for BIL 420/520 BitB test suite */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+  line-height: 1.5;
+  padding: 40px 24px;
+}
+
+.page-container {
+  max-width: 820px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.lead {
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.notice {
+  background: #eff6ff;
+  border-left: 4px solid #2563eb;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #1e3a8a;
+  margin: 16px 0 22px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-block;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #475569;
+}
+
+.btn-secondary:hover {
+  background: #334155;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Dashboard cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.test-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.tag-positive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.tag-negative {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Synthetic BitB floating window chrome (brand-free) */
+.fake-browser-window {
+  position: fixed;
+  top: 90px;
+  left: calc(50% - 230px);
+  width: 460px;
+  max-width: 92vw;
+  background: #ffffff;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.fake-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e2e8f0;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  user-select: none;
+  cursor: grab;
+}
+
+.fake-titlebar:active {
+  cursor: grabbing;
+}
+
+.win-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win-controls button {
+  width: 26px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #334155;
+}
+
+.win-controls button:hover {
+  background: #cbd5e1;
+}
+
+.mac-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mac-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.mac-dot-close { background: #ff5f56; }
+.mac-dot-min   { background: #ffbd2e; }
+.mac-dot-max   { background: #27c93f; }
+
+.fake-addressbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 7px 12px;
+  border-bottom: 1px solid #cbd5e1;
+  font-size: 12px;
+}
+
+.fake-url-box {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.fake-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #334155;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+}
