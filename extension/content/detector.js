@@ -114,7 +114,66 @@ window.BitBDetector = (function () {
   }
 
   /**
-   * Checks for simulated OS window controls (min/max/close buttons or macOS traffic lights).
+   * Checks whether an element is rendered as a small circular macOS traffic-light dot.
+   */
+  function isCircularDot(node, rect) {
+    if (rect.width < 8 || rect.width > 20 || rect.height < 8 || rect.height > 20) {
+      return false;
+    }
+    if (Math.abs(rect.width - rect.height) > 2) {
+      return false;
+    }
+
+    const style = window.getComputedStyle(node);
+    const bg = style.backgroundColor;
+    if (!bg || bg === "transparent" || bg === "rgba(0, 0, 0, 0)") {
+      return false;
+    }
+
+    const radiusStr = style.borderTopLeftRadius || "0px";
+    const radiusPx = parseFloat(radiusStr);
+    const isCircle = radiusStr.includes("%") ? radiusPx >= 40 : radiusPx >= rect.width / 2 - 1;
+    return isCircle;
+  }
+
+  /**
+   * Checks for a horizontal cluster of 3 macOS-style traffic-light buttons in the title bar.
+   */
+  function hasMacTrafficLights(el, titleBarCutoffY) {
+    const dots = [];
+    const nodes = el.querySelectorAll("button, span, div, a, i");
+
+    for (const node of nodes) {
+      const nRect = node.getBoundingClientRect();
+      if (nRect.width === 0 || nRect.height === 0 || nRect.top > titleBarCutoffY) {
+        continue;
+      }
+      if (isCircularDot(node, nRect)) {
+        dots.push(nRect);
+      }
+    }
+
+    if (dots.length < 3) {
+      return false;
+    }
+
+    dots.sort((a, b) => a.left - b.left);
+    for (let i = 0; i <= dots.length - 3; i++) {
+      const trio = [dots[i], dots[i + 1], dots[i + 2]];
+      const topSpread = Math.max(trio[0].top, trio[1].top, trio[2].top) - Math.min(trio[0].top, trio[1].top, trio[2].top);
+      const horizontalSpan = trio[2].right - trio[0].left;
+      const nonOverlapping = trio[1].left >= trio[0].right - 2 && trio[2].left >= trio[1].right - 2;
+
+      if (topSpread <= 6 && horizontalSpan <= 80 && nonOverlapping) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks for simulated OS window controls (Windows min/max/close glyphs or macOS traffic lights).
    */
   function inspectWindowChrome(el) {
     const rect = el.getBoundingClientRect();
@@ -140,7 +199,15 @@ window.BitBDetector = (function () {
 
     // Multiple window control buttons (e.g., minimize + maximize + close) strongly indicate fake OS chrome.
     // A single close button ("×") is common in benign modals and is intentionally ignored here.
-    return controlGlyphHits >= 2;
+    if (controlGlyphHits >= 2) {
+      return { detected: true, style: "windows" };
+    }
+
+    if (hasMacTrafficLights(el, titleBarCutoffY)) {
+      return { detected: true, style: "macos" };
+    }
+
+    return { detected: false, style: null };
   }
 
   /**
@@ -168,10 +235,15 @@ window.BitBDetector = (function () {
       }
     }
 
-    // 3. Simulated OS window controls
-    if (inspectWindowChrome(el)) {
+    // 3. Simulated OS window controls (Windows glyphs or macOS traffic-light dots)
+    const chromeCheck = inspectWindowChrome(el);
+    if (chromeCheck.detected) {
       score += WEIGHTS.WINDOW_CHROME_CONTROLS;
-      signals.push("Simulated OS/browser window control buttons detected in header");
+      signals.push(
+        chromeCheck.style === "macos"
+          ? "Simulated macOS traffic-light window controls detected in header"
+          : "Simulated Windows/OS window control buttons detected in header"
+      );
     }
 
     // 4. Embedded iframe inspection
@@ -188,10 +260,9 @@ window.BitBDetector = (function () {
       signals.push("Password input field present inside floating container");
     }
 
-    // TODO (BIL 420/520 Extension Point):
+    // TODO (Future Work):
     // - Add SVG padlock/TLS icon proximity checks
-    // - Add macOS traffic-light dot cluster detection (3 small circular spans in header)
-    // - Add drag-handle / viewport-clamping behavioral detection
+    // - Add Shadow DOM traversal for encapsulated overlays
 
     return {
       element: el,
