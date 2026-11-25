@@ -10,7 +10,7 @@
   <main class="page-container">
     <h1>BitB Guard — Synthetic Test Suite</h1>
     <p class="lead">
-      Standalone, brand-free HTML5/CSS3 scenarios built to evaluate true positives and false positives of the client-side BitB detector.
+      Standalone, brand-free HTML5/CSS3 scenarios built to evaluate true positives, edge cases, and false positives of the client-side BitB detector.
     </p>
 
     <div class="notice">
@@ -38,6 +38,28 @@
           </p>
         </div>
         <a class="btn" href="bitb-iframe-macos.html">Open Test 2</a>
+      </article>
+
+      <article class="test-card">
+        <div>
+          <span class="tag tag-positive">Positive Test 3</span>
+          <h2 style="font-size: 16px; margin: 10px 0 6px;">Dark Dynamic + 2FA BitB</h2>
+          <p style="font-size: 13px; color: #475569;">
+            Hover-URL spoofing link that dynamically injects a dark-theme BitB window after 600ms with a two-step password &rarr; 2FA prompt.
+          </p>
+        </div>
+        <a class="btn" href="bitb-dark-2fa.html">Open Test 3</a>
+      </article>
+
+      <article class="test-card">
+        <div>
+          <span class="tag tag-positive">Positive Test 4 (Edge)</span>
+          <h2 style="font-size: 16px; margin: 10px 0 6px;">Scheme-less URL BitB</h2>
+          <p style="font-size: 13px; color: #475569;">
+            Omits <code>https://</code> in the fake address bar to test heuristic resilience and partial evasion behavior.
+          </p>
+        </div>
+        <a class="btn" href="bitb-evasion-schemeless.html">Open Test 4</a>
       </article>
 
       <article class="test-card">

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test 3: Dark-Mode Dynamic BitB + 2FA Relay Simulation</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .dark-window {
+      background: #1e293b;
+      border-color: #475569;
+      color: #f8fafc;
+    }
+
+    .dark-window .fake-titlebar {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .dark-window .win-controls button {
+      color: #cbd5e1;
+    }
+
+    .dark-window .win-controls button:hover {
+      background: #334155;
+    }
+
+    .dark-window .fake-addressbar {
+      background: #1e293b;
+      border-bottom-color: #334155;
+    }
+
+    .dark-window .fake-url-box {
+      background: #0f172a;
+      border-color: #334155;
+      color: #e2e8f0;
+    }
+
+    .dark-window .form-group label {
+      color: #cbd5e1;
+    }
+
+    .dark-window .form-group input {
+      background: #0f172a;
+      border-color: #475569;
+      color: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <main class="page-container">
+    <span class="tag tag-positive">Positive Test 3</span>
+    <h1 style="margin-top: 8px;">Dark-Mode Dynamic BitB + 2FA Prompt</h1>
+    <p class="lead">
+      Simulates two real-world BitB techniques: (1) a link whose <code>href</code> previews <code>https://auth.example.test/openid</code> on hover while <code>onclick</code> cancels navigation, and (2) injecting a dark-theme BitB window dynamically into the DOM after a 600ms delay with a two-step password &rarr; 2FA code flow.
+    </p>
+
+    <div class="notice">
+      <strong>Expected Detection:</strong> <strong>High Risk (100/100)</strong> — catches dynamic DOM injection via <code>MutationObserver</code> (floating container + fake HTTPS URL + origin mismatch + Windows controls + password field).
+    </div>
+
+    <div class="actions">
+      <!-- Hover preview spoofing: looks like a real link on hover, but JS intercepts the click -->
+      <a id="spoofed-link" class="btn" href="https://auth.example.test/openid/login">
+        Sign in via ExampleAuth (Hover Preview Trick)
+      </a>
+      <a class="btn btn-secondary" href="index.html">Back to Test Suite</a>
+    </div>
+  </main>
+
+  <script>
+    const link = document.getElementById("spoofed-link");
+
+    link.addEventListener("click", (event) => {
+      event.preventDefault(); // Cancels actual navigation, spawns DOM overlay instead
+
+      if (document.getElementById("dynamic-bitb-window")) {
+        return;
+      }
+
+      // 600ms delay simulates asynchronous script/kit loading
+      setTimeout(() => {
+        const win = document.createElement("div");
+        win.id = "dynamic-bitb-window";
+        win.className = "fake-browser-window dark-window";
+        win.setAttribute("role", "dialog");
+        win.setAttribute("aria-label", "Synthetic Dark Auth Popup");
+
+        win.innerHTML = `
+          <div class="fake-titlebar">
+            <span>Sign in — ExampleAuth (Dark Theme)</span>
+            <div class="win-controls">
+              <button type="button" title="Minimize">−</button>
+              <button type="button" title="Maximize">□</button>
+              <button id="close-dark-btn" type="button" title="Close">×</button>
+            </div>
+          </div>
+          <div class="fake-addressbar">
+            <span aria-hidden="true">🔒</span>
+            <span class="fake-url-box">https://auth.example.test/openid/verify</span>
+          </div>
+          <div class="fake-body">
+            <div id="step-1">
+              <h2 style="font-size: 16px; margin-bottom: 12px;">ExampleAuth Sign In</h2>
+              <form id="dark-login-form">
+                <div class="form-group">
+                  <label for="dark-user">Username</label>
+                  <input id="dark-user" type="text" placeholder="player_demo" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                  <label for="dark-pass">Password</label>
+                  <input id="dark-pass" type="password" placeholder="••••••••" autocomplete="off" />
+                </div>
+                <button class="btn" type="submit" style="width: 100%;">Next: Verify 2FA (No-Op)</button>
+              </form>
+            </div>
+            <div id="step-2" class="hidden">
+              <h2 style="font-size: 16px; margin-bottom: 8px;">Authenticator Code Required</h2>
+              <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
+                Simulates real-time 2FA relay step (synthetic demo — no code is transmitted).
+              </p>
+              <form id="dark-2fa-form">
+                <div class="form-group">
+                  <label for="dark-otp">6-Digit Authenticator Code</label>
+                  <input id="dark-otp" type="text" maxlength="6" placeholder="123456" autocomplete="off" />
+                </div>
+                <button class="btn" type="submit" style="width: 100%;">Confirm (Synthetic No-Op)</button>
+              </form>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(win);
+
+        document.getElementById("close-dark-btn").addEventListener("click", () => {
+          win.remove();
+        });
+
+        document.getElementById("dark-login-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          document.getElementById("step-1").classList.add("hidden");
+          document.getElementById("step-2").classList.remove("hidden");
+        });
+
+        document.getElementById("dark-2fa-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          alert("Synthetic 2FA test complete — no data was transmitted.");
+        });
+      }, 600);
+    });
+  </script>
+</body>
+</html>
