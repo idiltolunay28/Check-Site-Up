@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test 1: Windows-Style BitB Popup</title>
+  <link rel="stylesheet" href="common.css" />
+</head>
+<body>
+  <main class="page-container">
+    <span class="tag tag-positive">Positive Test 1</span>
+    <h1 style="margin-top: 8px;">Windows-Style BitB Popup (Draggable)</h1>
+    <p class="lead">
+      Simulates a DOM-injected OpenID popup pretending to be <code>auth.example.test</code>.
+      Try dragging its title bar toward the edge of the browser window — unlike a real OS popup, it gets clipped by the viewport.
+    </p>
+
+    <div class="notice">
+      <strong>Expected Detection:</strong> High Risk — floating viewport-bound container + fake address bar mismatching origin + Windows controls (<code>− □ ×</code>) + password input.
+    </div>
+
+    <div class="actions">
+      <button id="open-btn" class="btn" type="button">Sign in with ExampleAuth</button>
+      <a class="btn btn-secondary" href="index.html">Back to Test Suite</a>
+    </div>
+  </main>
+
+  <!-- Synthetic BitB overlay (brand-free, hidden until button click) -->
+  <div id="bitb-window" class="fake-browser-window hidden" role="dialog" aria-label="Synthetic Auth Popup">
+    <div id="drag-handle" class="fake-titlebar">
+      <span>Sign in — ExampleAuth</span>
+      <div class="win-controls">
+        <button type="button" title="Minimize">−</button>
+        <button type="button" title="Maximize">□</button>
+        <button id="close-btn" type="button" title="Close">×</button>
+      </div>
+    </div>
+
+    <div class="fake-addressbar">
+      <span aria-hidden="true">🔒</span>
+      <span class="fake-url-box">https://auth.example.test/openid/login</span>
+    </div>
+
+    <div class="fake-body">
+      <h2 style="font-size: 16px; margin-bottom: 12px;">ExampleAuth Synthetic Login</h2>
+      <form id="demo-form">
+        <div class="form-group">
+          <label for="username">Account Name</label>
+          <input id="username" type="text" placeholder="demo_player" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" autocomplete="off" />
+        </div>
+        <button class="btn" type="submit" style="width: 100%;">Sign In (Synthetic No-Op)</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const winEl = document.getElementById("bitb-window");
+    const dragHandle = document.getElementById("drag-handle");
+
+    // 1. Dynamic reveal (triggers extension's MutationObserver)
+    document.getElementById("open-btn").addEventListener("click", () => {
+      winEl.classList.remove("hidden");
+    });
+
+    document.getElementById("close-btn").addEventListener("click", () => {
+      winEl.classList.add("hidden");
+    });
+
+    document.getElementById("demo-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      alert("Synthetic test form only — no credentials are transmitted.");
+    });
+
+    // 2. Simple drag logic to demonstrate viewport clipping vs. real OS popups
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    dragHandle.addEventListener("mousedown", (event) => {
+      if (event.target.tagName === "BUTTON") return;
+      isDragging = true;
+      const rect = winEl.getBoundingClientRect();
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      if (!isDragging) return;
+      const nextLeft = event.clientX - offsetX;
+      const nextTop = Math.max(0, event.clientY - offsetY);
+      winEl.style.left = `${nextLeft}px`;
+      winEl.style.top = `${nextTop}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  </script>
+</body>
+</html>
