@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test 4: Edge Case — Scheme-less URL Bar (No https://)</title>
+  <link rel="stylesheet" href="common.css" />
+</head>
+<body>
+  <main class="page-container">
+    <span class="tag tag-positive">Positive Test 4 (Edge Case)</span>
+    <h1 style="margin-top: 8px;">Scheme-less Address Bar BitB Popup</h1>
+    <p class="lead">
+      Modern browsers often hide <code>https://</code> in the address bar and display only the domain path (<code>sso.example.test/auth/login</code>).
+      This edge case evaluates how the heuristic engine behaves when the URL scheme is omitted.
+    </p>
+
+    <div class="notice">
+      <strong>Expected Detection &amp; Analysis Value:</strong> <strong>Medium Risk (50/100)</strong> — because the URL regex looks for <code>http(s)://</code>, omitting the scheme drops the score from 100 to 50, yet the window is still flagged via floating container (<code>+10</code>) + Windows controls (<code>+25</code>) + password input (<code>+15</code>). Ideal for discussing heuristic limitations in the report.
+    </div>
+
+    <div class="actions">
+      <button id="open-btn" class="btn" type="button">Trigger Scheme-less BitB Popup</button>
+      <a class="btn btn-secondary" href="index.html">Back to Test Suite</a>
+    </div>
+  </main>
+
+  <!-- Synthetic BitB overlay without https:// scheme -->
+  <div id="schemeless-window" class="fake-browser-window hidden" role="dialog" aria-label="Synthetic Scheme-less Popup">
+    <div class="fake-titlebar">
+      <span>SSO Sign In — ExamplePortal</span>
+      <div class="win-controls">
+        <button type="button" title="Minimize">−</button>
+        <button type="button" title="Maximize">□</button>
+        <button id="close-btn" type="button" title="Close">×</button>
+      </div>
+    </div>
+
+    <div class="fake-addressbar">
+      <span aria-hidden="true">🔒</span>
+      <!-- Intentionally omits https:// to mimic modern Chromium omnibox display -->
+      <span class="fake-url-box">sso.example.test/auth/login</span>
+    </div>
+
+    <div class="fake-body">
+      <h2 style="font-size: 16px; margin-bottom: 12px;">ExamplePortal SSO</h2>
+      <form id="edge-form">
+        <div class="form-group">
+          <label for="edge-user">Email</label>
+          <input id="edge-user" type="email" placeholder="user@example.test" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label for="edge-pass">Password</label>
+          <input id="edge-pass" type="password" placeholder="••••••••" autocomplete="off" />
+        </div>
+        <button class="btn" type="submit" style="width: 100%;">Continue (No-Op)</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const winEl = document.getElementById("schemeless-window");
+
+    document.getElementById("open-btn").addEventListener("click", () => {
+      winEl.classList.remove("hidden");
+    });
+
+    document.getElementById("close-btn").addEventListener("click", () => {
+      winEl.classList.add("hidden");
+    });
+
+    document.getElementById("edge-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      alert("Synthetic edge-case form — no data is transmitted.");
+    });
+  </script>
+</body>
+</html>
